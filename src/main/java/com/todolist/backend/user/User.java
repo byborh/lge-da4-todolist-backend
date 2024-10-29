@@ -1,6 +1,9 @@
 package com.todolist.backend.user;
 
+import com.todolist.backend.listnote.ListNote;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class User {
