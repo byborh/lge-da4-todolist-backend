@@ -3,6 +3,7 @@ package com.todolist.backend.user;
 import com.todolist.backend.listnote.ListNote;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,9 +14,13 @@ public class User {
     private Long id;
     private String username;
     private String password;
-    // à apprendre ce que c'est dans les parenthses !!
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ListNote> listNote;
+    private List<ListNote> listNotes = new ArrayList<>();
+
+    public List<ListNote> getListNotes() {
+        return listNotes;
+    }
 
     public Long getId() {
         return id;
@@ -41,11 +46,7 @@ public class User {
         this.password = password;
     }
 
-    public List<ListNote> getListNote() {
-        return listNote;
-    }
-
-    public void setListNote(List<ListNote> listNote) {
-        this.listNote = listNote;
+    public void setListNotes(List<ListNote> listNotes) {
+        this.listNotes = listNotes;
     }
 }

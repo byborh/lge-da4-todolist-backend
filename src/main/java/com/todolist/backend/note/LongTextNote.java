@@ -1,6 +1,7 @@
 package com.todolist.backend.note;
 
-import jakarta.persistence.Entity;
+import com.todolist.backend.listnote.ListNote;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -8,10 +9,16 @@ import java.util.Optional;
 @Entity
 public class LongTextNote implements Note{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String content;
     private LocalDateTime creationDate;
+    @ManyToOne
+    @JoinColumn(name = "list_note_id", nullable = false)
+    private ListNote listNote; // Relation inverse
+
 
     public LongTextNote(Long id, String title, String content, LocalDateTime creationDate) {
         this.id = id;

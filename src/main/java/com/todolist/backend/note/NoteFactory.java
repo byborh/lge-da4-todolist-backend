@@ -1,7 +1,10 @@
 package com.todolist.backend.note;
 
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 
+@Component
 public class NoteFactory {
 
     public Note createNote(String type, String title, String content, LocalDateTime creationDate) {
