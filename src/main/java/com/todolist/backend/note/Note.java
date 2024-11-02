@@ -1,15 +1,48 @@
 package com.todolist.backend.note;
 
-import java.sql.Timestamp;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-public interface Note {
-    Long getId();
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "note_type")
+public abstract class Note {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    String getTitle();
+    private String title;
+    private String content; // Le contenu peut être optionnel
 
-    Optional<String> getContent();
+    private LocalDateTime creationDate;
 
-    LocalDateTime getCreationDate();
+    // Constructeur protégé pour permettre l'instanciation par des sous-classes
+    protected Note(String title, LocalDateTime creationDate) {
+    }
+
+    public Note(String title, String content, LocalDateTime creationDate) {
+        this.title = title;
+        this.content = content;
+        this.creationDate = creationDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Optional<String> getContent() {
+        return Optional.ofNullable(content);
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public abstract String getType();
 }

@@ -11,18 +11,12 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
-    private final NoteFactory noteFactory; // Injection de NoteFactory
+    private final NoteFactory noteFactory;
 
     @Autowired
     public UserController(UserService userService, NoteFactory noteFactory) {
         this.userService = userService;
-        this.noteFactory = noteFactory; // Injecte le NoteFactory
-    }
-
-    @GetMapping("/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        Optional<User> user = userService.findUserByUsername(username);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        this.noteFactory = noteFactory;
     }
 
     // createUser
@@ -35,6 +29,18 @@ public class UserController {
 
         User savedUser = userService.saveUser(user);
         return ResponseEntity.ok(savedUser);
+    }
+
+    @GetMapping("/{userid}")
+    public ResponseEntity<User> getUserByUserid(@PathVariable Long userid) {
+        Optional<User> user = userService.findUserByUserid(userid);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        Optional<User> user = userService.findUserByUsername(username);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // deleteUser

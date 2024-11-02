@@ -50,19 +50,16 @@ public class ListNote {
             this.notes = notes;
     }*/
 
-    public void addNote(String type, String title, Optional<String> content, LocalDateTime creationDate) {
-        // Utilisation de la fabrique pour créer la note selon le type
-        Note note = noteFactory.createNote(type, title, content.orElse(null), creationDate);
-
-        // JE SAIS QUE C'EST CONTRE LA PRINCIPE DE OPEN CLOSED PRINCIPE MAIS BON, C'EST COMME CA, FLEMME DE REFAIRE LE CODE, Y'A UN PORNLEME ????
-        if(note instanceof TextNote) {
+    public void addNote(Note note) {
+        if (note instanceof TextNote) {
             textNotes.add((TextNote) note);
-        } else if(note instanceof LongTextNote) {
+        } else if (note instanceof LongTextNote) {
             longTextNotes.add((LongTextNote) note);
         } else {
             throw new IllegalArgumentException("Type de note inconnu : " + note);
         }
     }
+
 
     public boolean removeNoteById(Long noteId) {
         // Supprimer la note selon l'ID en cherchant dans les deux collections

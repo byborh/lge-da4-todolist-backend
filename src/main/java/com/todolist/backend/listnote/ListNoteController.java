@@ -12,7 +12,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/api/notes")
+@RequestMapping("/api/listnote")
 public class ListNoteController {
     private final ListNoteService listNoteService;
 
@@ -21,19 +21,9 @@ public class ListNoteController {
         this.listNoteService = listNoteService;
     }
 
-    @GetMapping("/{listId}/notes")
-    public ResponseEntity<List<Note>> getAllNotes(@PathVariable Long listId) {
-        List<Note> notes = listNoteService.getAllNotes(listId);
-        return ResponseEntity.ok(notes);
-    }
 
-    @GetMapping("/note/{noteId}")
-    public ResponseEntity<Optional<Note>> findNoteById(@PathVariable Long noteId) {
-        Optional<Note> note = listNoteService.findNoteById(noteId);
-        return note.isPresent() ? ResponseEntity.ok(note) : ResponseEntity.notFound().build();
-    }
-
-    @PostMapping("/{listId}/note")
+    // create a new note
+    @PostMapping("/note/{listId}")
     public ResponseEntity<ListNote> addNote(@PathVariable Long listId, @RequestBody Note note) {
         String type = note.getClass().getSimpleName();
         String title = note.getTitle();
@@ -44,7 +34,21 @@ public class ListNoteController {
         return updatedListNote != null ? ResponseEntity.ok(updatedListNote) : ResponseEntity.notFound().build();
     }
 
+    // get all notes of user
+    @GetMapping("/{listId}")
+    public ResponseEntity<List<Note>> getAllNotes(@PathVariable Long listId) {
+        List<Note> notes = listNoteService.getAllNotes(listId);
+        return ResponseEntity.ok(notes);
+    }
 
+    // get a specific note
+    @GetMapping("/note/{noteId}")
+    public ResponseEntity<Optional<Note>> findNoteById(@PathVariable Long noteId) {
+        Optional<Note> note = listNoteService.findNoteById(noteId);
+        return note.isPresent() ? ResponseEntity.ok(note) : ResponseEntity.notFound().build();
+    }
+
+    // delete a specific note
     @DeleteMapping("/{listId}/note/{noteId}")
     public ResponseEntity<Void> removeNote(@PathVariable Long listId, @PathVariable Long noteId) {
         boolean removed = listNoteService.removeNote(listId, noteId);
