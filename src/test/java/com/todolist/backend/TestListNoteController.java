@@ -64,7 +64,7 @@ public class TestListNoteController {
         LocalDateTime creationDate = LocalDateTime.now(); // Date de création
 
         // Créer la note avec les paramètres requis
-        TextNote textNote = new TextNote(title, creationDate);
+        TextNote textNote = new TextNote(title, false, creationDate);
 
         // Configurer le comportement du service
         when(listNoteService.findNoteById(noteId)).thenReturn(Optional.of(textNote));

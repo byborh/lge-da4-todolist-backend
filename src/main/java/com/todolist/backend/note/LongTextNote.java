@@ -14,8 +14,8 @@ public class LongTextNote extends Note {
     private ListNote listNote; // Relation inverse
 
     // Constructeur
-    public LongTextNote(String title, String content, LocalDateTime creationDate) {
-        super(title, content, creationDate); // Appelle le constructeur parent
+    public LongTextNote(String title, String content, boolean status, LocalDateTime creationDate) {
+        super(title, content, status, creationDate);
     }
 
     @Override

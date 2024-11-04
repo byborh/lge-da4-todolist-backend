@@ -13,8 +13,8 @@ public class TextNote extends Note {
     private ListNote listNote; // Relation inverse
 
     // Constructeur
-    public TextNote(String title, LocalDateTime creationDate) {
-        super(title, creationDate); // Appelle le constructeur parent
+    public TextNote(String title, boolean status, LocalDateTime creationDate) {
+        super(title, null, status, creationDate);
     }
 
     @Override

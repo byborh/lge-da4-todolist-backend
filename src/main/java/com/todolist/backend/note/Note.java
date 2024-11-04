@@ -15,16 +15,14 @@ public abstract class Note {
 
     private String title;
     private String content; // Le contenu peut être optionnel
+    private boolean status;
 
     private LocalDateTime creationDate;
 
-    // Constructeur protégé pour permettre l'instanciation par des sous-classes
-    protected Note(String title, LocalDateTime creationDate) {
-    }
-
-    public Note(String title, String content, LocalDateTime creationDate) {
+    protected Note(String title, String content, boolean status, LocalDateTime creationDate) {
         this.title = title;
         this.content = content;
+        this.status = status;
         this.creationDate = creationDate;
     }
 
@@ -42,6 +40,32 @@ public abstract class Note {
 
     public LocalDateTime getCreationDate() {
         return creationDate;
+    }
+
+    public boolean getStatus(){return status;}
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public boolean isStatus() {
+        return status;
     }
 
     public abstract String getType();
