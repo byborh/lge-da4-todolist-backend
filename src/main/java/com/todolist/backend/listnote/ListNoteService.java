@@ -24,17 +24,24 @@ public class ListNoteService {
         this.noteFactory = noteFactory;
     }
 
-    public ListNote addNote(Long listId, String type, String title, Optional<String> content, LocalDateTime creationDate) {
+    public ListNote addNote(Long listId, Long userId, String type, String title, Optional<String> content, LocalDateTime creationDate) {
         Optional<ListNote> optionalListNote = listNoteRepository.findById(listId);
         if (optionalListNote.isPresent()) {
             ListNote listNote = optionalListNote.get();
+
+            // Créer la note sans besoin de la connaissance de la liste
             Note note = noteFactory.createNote(type, title, content.orElse(null), false, creationDate);
+
+            // Ajouter la note à la liste de notes
             listNote.getNotes().add(note);
+
             listNoteRepository.save(listNote);
             return listNote;
         }
         return null;
     }
+
+
 
     public List<Note> getAllNotes(Long listId) {
         Optional<ListNote> optionalListNote = listNoteRepository.findById(listId);

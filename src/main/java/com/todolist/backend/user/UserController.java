@@ -2,6 +2,7 @@ package com.todolist.backend.user;
 
 import com.todolist.backend.listnote.ListNote;
 import com.todolist.backend.note.NoteFactory;
+import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,12 @@ public class UserController {
     // createUser
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
+        // Vérifier si cet utilisateur n'existe pas déjà
+        Optional<User> userVerif = userService.findUserByUsername(user.getUsername());
+        if(userVerif.isPresent()){
+            throw new EntityExistsException("L'utilisateur avec le nom : " + user.getUsername() + ", existe déjà.");
+        }
+
         // Créer une nouvelle ListNote
         ListNote listNote = new ListNote(noteFactory);
         listNote.setUser(user); // Associe l'utilisateur à la ListNote
@@ -37,7 +44,7 @@ public class UserController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         Optional<User> user = userService.findUserByUsername(username);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());

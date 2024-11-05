@@ -1,5 +1,6 @@
 package com.todolist.backend.note;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todolist.backend.listnote.ListNote;
 import jakarta.persistence.*;
 
@@ -10,7 +11,12 @@ import java.time.LocalDateTime;
 public class TextNote extends Note {
     @ManyToOne
     @JoinColumn(name = "list_note_id", nullable = false)
+    @JsonIgnore
     private ListNote listNote; // Relation inverse
+
+    public TextNote() {
+        // Constructeur sans arguments requis par json
+    }
 
     // Constructeur
     public TextNote(String title, boolean status, LocalDateTime creationDate) {

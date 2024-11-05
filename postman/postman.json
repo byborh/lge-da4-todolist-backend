@@ -1,0 +1,155 @@
+{
+  "info": {
+    "name": "API Todo List - R. Beibarys",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"username\": \"bruce\", \"password\": \"batpass\" }"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/users",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "users"]
+        }
+      }
+    },
+    {
+      "name": "Get User by userId",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/users/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "users", "1"]
+        }
+      }
+    },
+    {
+      "name": "Get User by username",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/users/bruce",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "users", "bruce"]
+        }
+      }
+    },
+    {
+      "name": "Delete User",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:8080/api/users/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "users", "1"]
+        }
+      }
+    },
+    {
+      "name": "Add Note to List",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"title\": \"First Note\", \"content\": \"Content of the note\", \"status\": false, \"creationDate\": \"2024-11-01T10:00:00\" }"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/listnote/1/notes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "listnote", "1", "notes"]
+        }
+      }
+    },
+    {
+      "name": "Get All Notes in a List",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/listnote/1/notes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "listnote", "1", "notes"]
+        }
+      }
+    },
+    {
+      "name": "Get Note by noteId",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/listnote/notes/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "listnote", "notes", "1"]
+        }
+      }
+    },
+    {
+      "name": "Modify Note in a List",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"id\": 1, \"title\": \"Updated Note Title\", \"content\": \"Updated content\", \"status\": true, \"creationDate\": \"2024-11-01T10:00:00\" }"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/listnote/1/notes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "listnote", "1", "notes"]
+        }
+      }
+    },
+    {
+      "name": "Delete Note from List",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:8080/api/listnote/1/notes/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "listnote", "1", "notes", "1"]
+        }
+      }
+    }
+  ]
+}

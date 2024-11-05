@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 @Entity
 public class ListNote {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,16 +18,16 @@ public class ListNote {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
     @OneToMany(mappedBy = "listNote", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TextNote> textNotes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "listNote", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LongTextNote> longTextNotes = new ArrayList<>();
+    private List<Note> notes = new ArrayList<>();
 
     @Transient // Empêche Hibernate d'essayer de mapper ce champ en base de données
-    private final NoteFactory noteFactory;
+    private NoteFactory noteFactory;
 
+    // Constructeur par défaut requis pour Jackson
+    public ListNote() {}
+
+    // Constructeur principal
     public ListNote(NoteFactory noteFactory) {
         this.noteFactory = noteFactory;
     }
@@ -40,31 +41,23 @@ public class ListNote {
     }
 
     public List<Note> getNotes() {
-        // retourne tout type de note
-        List<Note> allNotes = new ArrayList<>(textNotes);
-        allNotes.addAll(longTextNotes);
+        List<Note> allNotes = new ArrayList<>(notes);
+        // allNotes.addAll(longTextNotes);
         return allNotes;
     }
 
-    /*public void setNotes(List<Note> notes) {
-            this.notes = notes;
-    }*/
-
     public void addNote(Note note) {
-        if (note instanceof TextNote) {
-            textNotes.add((TextNote) note);
-        } else if (note instanceof LongTextNote) {
-            longTextNotes.add((LongTextNote) note);
-        } else {
-            throw new IllegalArgumentException("Type de note inconnu : " + note);
-        }
+        notes.add(note);
+        note.setListNote(this);
     }
 
-
     public boolean removeNoteById(Long noteId) {
-        // Supprimer la note selon l'ID en cherchant dans les deux collections
-        boolean removedFromTextNote = textNotes.removeIf(note -> note.getId().equals(noteId));
-        boolean  removedFromLongTextNote = longTextNotes.removeIf(note -> note.getId().equals(noteId));
-        return removedFromTextNote || removedFromLongTextNote;
+        boolean removedFromNote = notes.removeIf(note -> note.getId().equals(noteId));
+        return removedFromNote;
+    }
+
+    // Setter pour l'injection de noteFactory si nécessaire
+    public void setNoteFactory(NoteFactory noteFactory) {
+        this.noteFactory = noteFactory;
     }
 }

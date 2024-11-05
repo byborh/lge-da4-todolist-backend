@@ -1,5 +1,6 @@
 package com.todolist.backend.note;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todolist.backend.listnote.ListNote;
 import jakarta.persistence.*;
 
@@ -11,7 +12,12 @@ public class LongTextNote extends Note {
 
     @ManyToOne
     @JoinColumn(name = "list_note_id", nullable = false)
+    @JsonIgnore
     private ListNote listNote; // Relation inverse
+
+    public LongTextNote(){
+        // Constructeur sans arguments requis par json
+    }
 
     // Constructeur
     public LongTextNote(String title, String content, boolean status, LocalDateTime creationDate) {

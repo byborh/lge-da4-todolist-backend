@@ -22,14 +22,15 @@ public class ListNoteController {
     }
 
     // Créer une nouvelle note dans une liste spécifique
-    @PostMapping("/{listId}/notes")
-    public ResponseEntity<ListNote> addNote(@PathVariable Long listId, @RequestBody Note note) {
+    @PostMapping("/userId/{listId}/notes")
+    public ResponseEntity<ListNote> addNote(@PathVariable Long listId, @PathVariable Long userId, @RequestBody Note note) {
         String type = note.getClass().getSimpleName();
         String title = note.getTitle();
         String content = note instanceof LongTextNote ? note.getContent().orElse(null) : null;
         LocalDateTime creationDate = note.getCreationDate();
 
-        ListNote updatedListNote = listNoteService.addNote(listId, type, title, Optional.ofNullable(content), creationDate);
+        // Associer l'utilisateur à la liste de notes, puis ajouter la note
+        ListNote updatedListNote = listNoteService.addNote(listId, userId, type, title, Optional.ofNullable(content), creationDate);
         return updatedListNote != null ? ResponseEntity.ok(updatedListNote) : ResponseEntity.notFound().build();
     }
 
@@ -39,6 +40,9 @@ public class ListNoteController {
         List<Note> notes = listNoteService.getAllNotes(listId);
         return ResponseEntity.ok(notes);
     }
+
+    // récupérer toute les notes d'un utilisateur
+    // l'endpoint à créer
 
     // Récupérer une note spécifique par son ID
     @GetMapping("/notes/{noteId}")
