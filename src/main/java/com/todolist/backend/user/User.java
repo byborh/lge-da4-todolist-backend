@@ -20,9 +20,6 @@ public class User {
 
     public User() {}
 
-    public <E> User(long l, String testUser, ArrayList<E> es) {
-    }
-
     public List<ListNote> getListNotes() {
         return listNotes;
     }

@@ -18,25 +18,13 @@ class TodolistApplicationTests {
 	@Test
 	void TestUserController() throws Exception {
 		// Instanciation de TestUserController ou exécution des tests ici
-		TestUserController testUserController = new TestUserController();
-		testUserController.createUser_ShouldReturnCreatedUser();
-		testUserController.createUser_WhenUserExists_ShouldReturnConflict();
-		testUserController.getUserByUserid_ShouldReturnUser();
-		testUserController.getUserByUsername_ShouldReturnUser();
-		testUserController.getUserByUserid_WhenUserNotFound_ShouldReturnNotFound();
+
 	}
 
 	@Test
 	void TestListNoteController() throws Exception {
 		// Instanciation de TestListNoteController ou exécution des tests ici
-		TestListNoteController testListNoteController = new TestListNoteController();
-		testListNoteController.addNote_ShouldReturnUpdatedListNote();
-		testListNoteController.getAllNotes_ShouldReturnListOfNotes();
-		testListNoteController.modifyNote_ShouldReturnUpdatedListNote();
-		testListNoteController.findNoteById_ShouldReturnNote();
-		testListNoteController.findNoteById_ShouldReturnNotFound();
-		testListNoteController.findNoteById_ShouldReturnNotFound();
-		testListNoteController.removeNote_ShouldReturnNoContent();
+
 	}
 
 }
