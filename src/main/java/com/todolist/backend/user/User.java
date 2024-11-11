@@ -18,6 +18,8 @@ public class User {
     @JsonManagedReference
     private List<ListNote> listNotes = new ArrayList<>();
 
+    public User() {}
+
     public <E> User(long l, String testUser, ArrayList<E> es) {
     }
 

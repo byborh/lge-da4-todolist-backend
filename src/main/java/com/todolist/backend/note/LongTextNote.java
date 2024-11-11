@@ -16,13 +16,17 @@ public class LongTextNote extends Note {
     private ListNote listNote; // Relation inverse
 
     public LongTextNote(){
-        // Constructeur sans arguments requis par json
+        super(); // Constructeur sans arguments requis par json
     }
 
     // Constructeur
-    public LongTextNote(String title, String content, boolean status, LocalDateTime creationDate) {
-        super(title, content, status, creationDate);
+    public LongTextNote(ListNote listNote, String title, String content, boolean status, LocalDateTime creationDate) {
+        super(listNote, title, content, status, creationDate);
+
+        this.listNote = listNote;
     }
+
+
 
     @Override
     public String getType() {

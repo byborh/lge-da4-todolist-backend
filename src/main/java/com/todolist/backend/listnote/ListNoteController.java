@@ -2,7 +2,10 @@ package com.todolist.backend.listnote;
 
 import com.todolist.backend.note.LongTextNote;
 import com.todolist.backend.note.Note;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +32,22 @@ public class ListNoteController {
         String content = note instanceof LongTextNote ? note.getContent().orElse(null) : null;
         LocalDateTime creationDate = note.getCreationDate();
 
+        // je teste le type de la note car là, je comprends pas pq ça ne fonctionne pas :
+        System.out.println(type);
+
         // Associer l'utilisateur à la liste de notes, puis ajouter la note
         ListNote updatedListNote = listNoteService.addNote(listId, userId, type, title, Optional.ofNullable(content), creationDate);
         return updatedListNote != null ? ResponseEntity.ok(updatedListNote) : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{userId}")
+    public ResponseEntity<ListNote> addListNote(@PathVariable Long userId) {
+        try {
+            ListNote listNote = listNoteService.addListNote(userId);
+            return ResponseEntity.ok(listNote);
+        } catch (EntityNotFoundException err) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     // Récupérer toutes les notes d'une liste spécifique
@@ -40,9 +56,6 @@ public class ListNoteController {
         List<Note> notes = listNoteService.getAllNotes(userId, listId);
         return ResponseEntity.ok(notes);
     }
-
-    // récupérer toute les notes d'un utilisateur
-    // l'endpoint à créer
 
     // Récupérer une note spécifique par son ID
     @GetMapping("/{userId}/{listId}/{noteId}")
@@ -69,6 +82,12 @@ public class ListNoteController {
     @DeleteMapping("/{userId}/{listId}/{noteId}")
     public ResponseEntity<Void> removeNote(@PathVariable Long userId, @PathVariable Long listId, @PathVariable Long noteId) {
         boolean removed = listNoteService.removeNote(userId, listId, noteId);
+        return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{userId}/{listId}")
+    public ResponseEntity<Void> removeList(@PathVariable Long userId, @PathVariable Long listId) {
+        boolean removed = listNoteService.removeList(userId, listId);
         return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

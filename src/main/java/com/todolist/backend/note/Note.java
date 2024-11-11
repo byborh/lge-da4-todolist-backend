@@ -3,12 +3,9 @@ package com.todolist.backend.note;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.todolist.backend.listnote.ListNote;
-import com.todolist.backend.user.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 // identifier le type de Note pour les json dans la requête en gros
@@ -29,14 +26,13 @@ public abstract class Note {
     private boolean status;
     private LocalDateTime creationDate;
     @ManyToOne
-    @JoinColumn(name = "list_note_id", nullable = true) // peut être null si la note n'est pas encore associée
+    @JoinColumn(name = "list_note_id", nullable = false) // la liste id est OBLIGATOIRE
     private ListNote listNote;
 
-    protected Note() {
-        // constructeur sans arguments requis pour hibernates on dirait groooos
-    }
+    protected Note() {}
 
-    protected Note(String title, String content, boolean status, LocalDateTime creationDate) {
+    protected Note(ListNote listNote, String title, String content, boolean status, LocalDateTime creationDate) {
+        this.listNote = listNote;
         this.title = title;
         this.content = content;
         this.status = status;

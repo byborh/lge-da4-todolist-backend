@@ -15,13 +15,16 @@ public class TextNote extends Note {
     private ListNote listNote; // Relation inverse
 
     public TextNote() {
-        // Constructeur sans arguments requis par json
+        super(); // Constructeur sans arguments requis par json
     }
 
     // Constructeur
-    public TextNote(String title, boolean status, LocalDateTime creationDate) {
-        super(title, null, status, creationDate);
+    public TextNote(ListNote listNote, String title, boolean status, LocalDateTime creationDate) {
+        super(listNote, title, null, status, creationDate);
+
+        this.listNote = listNote;
     }
+
 
     @Override
     public String getType() {

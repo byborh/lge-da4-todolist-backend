@@ -20,31 +20,18 @@ public class ListNoteService {
     private final NoteRepository noteRepository;
     private final NoteFactory noteFactory;
     private final UserRepository userRepository;
+    private final ListNoteFactory listNoteFactory;
 
     @Autowired
-    public ListNoteService(ListNoteRepository listNoteRepository, NoteRepository noteRepository, NoteFactory noteFactory, UserRepository userRepository) {
+    public ListNoteService(ListNoteRepository listNoteRepository, NoteRepository noteRepository, NoteFactory noteFactory, UserRepository userRepository, ListNoteFactory listNoteFactory) {
         this.listNoteRepository = listNoteRepository;
         this.noteRepository = noteRepository;
         this.noteFactory = noteFactory;
         this.userRepository = userRepository;
+        this.listNoteFactory = listNoteFactory;
     }
 
-    public ListNote addNote2(Long listId, Long userId, String type, String title, Optional<String> content, LocalDateTime creationDate) {
-        Optional<ListNote> optionalListNote = listNoteRepository.findById(listId);
-        if (optionalListNote.isPresent()) {
-            ListNote listNote = optionalListNote.get();
 
-            // Créer la note sans besoin de la connaissance de la liste
-            Note note = noteFactory.createNote(type, title, content.orElse(null), false, creationDate);
-
-            // Ajouter la note à la liste de notes
-            listNote.getNotes().add(note);
-
-            listNoteRepository.save(listNote);
-            return listNote;
-        }
-        return null;
-    }
     @Transactional // on dirait que c'est pour s'assurer que les transactions fonctionnent correctement
     public ListNote addNote(Long listId, Long userId, String type, String title, Optional<String> content, LocalDateTime creationDate) {
         // Rechercher l'utilisateur par son ID
@@ -61,7 +48,8 @@ public class ListNoteService {
                 ListNote listNote = optionalListNote.get();
 
                 // Créer la note sans besoin de la connaissance de la liste
-                Note note = noteFactory.createNote(type, title, content.orElse(null), false, creationDate);
+                Note note = noteFactory.createNote(listNote, type, title, content.orElse(null), false, creationDate);
+                System.out.println("Voici la liste note correspondante : " + note.getListNote());
                 note.setListNote(listNote);
 
                 if (note == null) {
@@ -74,7 +62,9 @@ public class ListNoteService {
 
                 // Ajouter la note à la liste de notes
                 listNote.getNotes().add(note);
+                listNote.addNote(note); // la méthode que j'avais créé dans listnote et que j'ai oublié d'utiliser
 
+                noteRepository.save(note);
                 // Sauvegarder la liste mise à jour
                 listNoteRepository.save(listNote);
                 return listNote;
@@ -83,6 +73,16 @@ public class ListNoteService {
         return null;
     }
 
+    @Transactional
+    public ListNote addListNote(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            ListNote listNote = listNoteFactory.createListNote(user);
+            return listNoteRepository.save(listNote);
+        }
+        throw new EntityNotFoundException("Utilisateur non trouvé pour l'ID : " + userId);
+    }
 
     public List<Note> getAllNotes(Long userId, Long listId) {
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -124,6 +124,7 @@ public class ListNoteService {
     }
 
 
+    // ça met pas à jour le type de note, c bzr
     public ListNote modifyNote(Long userId, Long listId, Note updatedNoteData) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
@@ -190,16 +191,47 @@ public class ListNoteService {
         }
         return false;
     }
+
+    public boolean removeList2(Long userId, Long listId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            Optional<ListNote> optionalListNote = user.getListNotes().stream()
+                    .filter(listNote -> listNote.getId().equals(listId))
+                    .findFirst();
+
+            if(optionalListNote.isPresent()) {
+                ListNote listNote = optionalListNote.get();
+//                boolean removed = listNote.removeListNoteById(listId);
+//                if(removed) {
+//                    listNoteRepository.save(listNote);
+//                    return true;
+//                }
+            }
+
+        }
+
+        return false;
+    }
+
+    @Transactional
+    public boolean removeList(Long userId, Long listId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            Optional<ListNote> optionalListNote = user.getListNotes().stream()
+                    .filter(listNote -> listNote.getId().equals(listId))
+                    .findFirst();
+
+            if(optionalListNote.isPresent()) {
+                ListNote listNote = optionalListNote.get();
+                user.getListNotes().remove(listNote);
+                listNoteRepository.deleteById(listId);
+                return true;
+            }
+        }
+        return false;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-

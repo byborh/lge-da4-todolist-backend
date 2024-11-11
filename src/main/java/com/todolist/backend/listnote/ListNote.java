@@ -22,6 +22,9 @@ public class ListNote {
     private User user;
     @OneToMany(mappedBy = "listNote", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes = new ArrayList<>();
+//    @OneToMany(mappedBy = "listNote", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Note> notes;
+
 
     @Transient // Empêche Hibernate d'essayer de mapper ce champ en base de données
     private NoteFactory noteFactory;

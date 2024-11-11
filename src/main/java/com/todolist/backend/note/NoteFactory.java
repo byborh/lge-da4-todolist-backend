@@ -1,5 +1,6 @@
 package com.todolist.backend.note;
 
+import com.todolist.backend.listnote.ListNote;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -7,17 +8,18 @@ import java.time.LocalDateTime;
 @Component
 public class NoteFactory {
 
-    public Note createNote(String type, String title, String content, boolean status, LocalDateTime creationDate) {
+    public Note createNote(ListNote listNote, String type, String title, String content, boolean status, LocalDateTime creationDate) {
         switch (type.toLowerCase()) {
             case "textnote":
-                return new TextNote(title, status, creationDate);
+                return new TextNote(listNote, title, status, creationDate);
             case "longtextnote":
-                return new LongTextNote(title, content, status, creationDate);
+                return new LongTextNote(listNote, title, content, status, creationDate);
             default:
                 throw new IllegalArgumentException("Type de note inconnu : " + type);
         }
     }
 
+    // à modifier le type aussi, dattebayo
     public Note modifyNote(Note note, String title, String content, boolean status, LocalDateTime creationDate) {
         note.setTitle(title);
         note.setStatus(status);
