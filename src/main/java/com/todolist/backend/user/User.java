@@ -1,5 +1,6 @@
 package com.todolist.backend.user;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.todolist.backend.listnote.ListNote;
 import jakarta.persistence.*;
 
@@ -13,9 +14,12 @@ public class User {
     private Long id;
     private String username;
     private String password;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<ListNote> listNotes = new ArrayList<>();
+
+    public <E> User(long l, String testUser, ArrayList<E> es) {
+    }
 
     public List<ListNote> getListNotes() {
         return listNotes;

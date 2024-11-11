@@ -22,8 +22,8 @@ public class ListNoteController {
     }
 
     // Créer une nouvelle note dans une liste spécifique
-    @PostMapping("/userId/{listId}/notes")
-    public ResponseEntity<ListNote> addNote(@PathVariable Long listId, @PathVariable Long userId, @RequestBody Note note) {
+    @PostMapping("/{userId}/{listId}")
+    public ResponseEntity<ListNote> addNote(@PathVariable Long userId, @PathVariable Long listId, @RequestBody Note note) {
         String type = note.getClass().getSimpleName();
         String title = note.getTitle();
         String content = note instanceof LongTextNote ? note.getContent().orElse(null) : null;
@@ -35,9 +35,9 @@ public class ListNoteController {
     }
 
     // Récupérer toutes les notes d'une liste spécifique
-    @GetMapping("/{listId}/notes")
-    public ResponseEntity<List<Note>> getAllNotes(@PathVariable Long listId) {
-        List<Note> notes = listNoteService.getAllNotes(listId);
+    @GetMapping("/{userId}/{listId}")
+    public ResponseEntity<List<Note>> getAllNotes(@PathVariable Long userId, @PathVariable Long listId) {
+        List<Note> notes = listNoteService.getAllNotes(userId, listId);
         return ResponseEntity.ok(notes);
     }
 
@@ -45,19 +45,20 @@ public class ListNoteController {
     // l'endpoint à créer
 
     // Récupérer une note spécifique par son ID
-    @GetMapping("/notes/{noteId}")
-    public ResponseEntity<Optional<Note>> findNoteById(@PathVariable Long noteId) {
-        Optional<Note> note = listNoteService.findNoteById(noteId);
+    @GetMapping("/{userId}/{listId}/{noteId}")
+    public ResponseEntity<Optional<Note>> findNoteById(@PathVariable Long userId, @PathVariable Long listId, @PathVariable Long noteId) {
+        Optional<Note> note = listNoteService.findNoteById(userId, listId, noteId);
         return note.isPresent() ? ResponseEntity.ok(note) : ResponseEntity.notFound().build();
     }
 
     // Modifier une note dans une liste spécifique
-    @PutMapping("/{listId}/notes")
+    @PutMapping("/{userId}/{listId}/{noteId}")
     public ResponseEntity<ListNote> modifyNote(
+            @PathVariable Long userId,
             @PathVariable Long listId,
             @RequestBody Note noteDetails) {
 
-        Optional<ListNote> updatedListNote = Optional.ofNullable(listNoteService.modifyNote(listId, noteDetails));
+        Optional<ListNote> updatedListNote = Optional.ofNullable(listNoteService.modifyNote(userId, listId, noteDetails));
 
         return updatedListNote
                 .map(ResponseEntity::ok)
@@ -65,9 +66,9 @@ public class ListNoteController {
     }
 
     // Supprimer une note spécifique dans une liste
-    @DeleteMapping("/{listId}/notes/{noteId}")
-    public ResponseEntity<Void> removeNote(@PathVariable Long listId, @PathVariable Long noteId) {
-        boolean removed = listNoteService.removeNote(listId, noteId);
+    @DeleteMapping("/{userId}/{listId}/{noteId}")
+    public ResponseEntity<Void> removeNote(@PathVariable Long userId, @PathVariable Long listId, @PathVariable Long noteId) {
+        boolean removed = listNoteService.removeNote(userId, listId, noteId);
         return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

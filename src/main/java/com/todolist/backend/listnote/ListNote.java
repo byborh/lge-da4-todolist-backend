@@ -1,5 +1,6 @@
 package com.todolist.backend.listnote;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.todolist.backend.note.*;
 import com.todolist.backend.user.User;
 import jakarta.persistence.*;
@@ -16,6 +17,7 @@ public class ListNote {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @OneToMany(mappedBy = "listNote", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -32,6 +34,9 @@ public class ListNote {
         this.noteFactory = noteFactory;
     }
 
+    public Long getId() {
+        return this.id;
+    }
     public User getUser() {
         return user;
     }

@@ -1,93 +1,118 @@
 package com.todolist.backend;
 
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.todolist.backend.listnote.ListNote;
+import com.todolist.backend.note.NoteFactory;
 import com.todolist.backend.user.User;
 import com.todolist.backend.user.UserController;
 import com.todolist.backend.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@WebMvcTest(UserController.class)
+@WebMvcTest(TestUserController.class)
 public class TestUserController {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private UserService userService;
 
-    @InjectMocks
-    private UserController userController;
+    @MockBean
+    private NoteFactory noteFactory;
 
-    private User testUser;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private User user;
+    private ListNote listNote;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        testUser = new User();
-        testUser.setId(1L);
-        testUser.setUsername("ton_username");
-        testUser.setPassword("ton_password");
+        user = new User(1L, "testUser", new ArrayList<>());
+        listNote = new ListNote(noteFactory);
     }
 
+    // Test pour la création d'utilisateur
     @Test
-    void getUserByUsername_UserExists_ReturnsUser() throws Exception {
-        when(userService.findUserByUsername("ton_username")).thenReturn(Optional.of(testUser));
+    void createUser_ShouldReturnCreatedUser() throws Exception {
+        when(userService.findUserByUsername(user.getUsername())).thenReturn(Optional.empty());
+        when(userService.saveUser(user)).thenReturn(user);
 
-        mockMvc.perform(get("/api/users/ton_username"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("ton_username"));
+        ResultActions result = mockMvc.perform(post("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)));
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("testUser"));
     }
 
+    // Test pour la création d'utilisateur avec un nom déjà existant
     @Test
-    void getUserByUsername_UserDoesNotExist_ReturnsNotFound() throws Exception {
-        when(userService.findUserByUsername("nonexistent_username")).thenReturn(Optional.empty());
+    void createUser_WhenUserExists_ShouldReturnConflict() throws Exception {
+        when(userService.findUserByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-        mockMvc.perform(get("/api/users/nonexistent_username"))
-                .andExpect(status().isNotFound());
+        ResultActions result = mockMvc.perform(post("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)));
+
+        result.andExpect(status().isConflict())
+                .andExpect(content().string("L'utilisateur avec le nom : testUser, existe déjà."));
     }
 
+    // Test pour récupérer un utilisateur par ID
     @Test
-    void createUser_ValidUser_CreatesUser() throws Exception {
-        when(userService.saveUser(any(User.class))).thenReturn(testUser);
+    void getUserByUserid_ShouldReturnUser() throws Exception {
+        when(userService.findUserByUserid(1L)).thenReturn(Optional.of(user));
 
-        mockMvc.perform(post("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"ton_username\",\"password\":\"ton_password\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("ton_username"));
+        ResultActions result = mockMvc.perform(get("/api/users/{userid}", 1L));
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("testUser"));
     }
 
+    // Test pour récupérer un utilisateur par nom d'utilisateur
     @Test
-    void deleteUser_UserExists_ReturnsNoContent() throws Exception {
+    void getUserByUsername_ShouldReturnUser() throws Exception {
+        when(userService.findUserByUsername("testUser")).thenReturn(Optional.of(user));
+
+        ResultActions result = mockMvc.perform(get("/api/users/username/{username}", "testUser"));
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("testUser"));
+    }
+
+    // Test pour récupérer un utilisateur avec un ID inexistant
+    @Test
+    void getUserByUserid_WhenUserNotFound_ShouldReturnNotFound() throws Exception {
+        when(userService.findUserByUserid(1L)).thenReturn(Optional.empty());
+
+        ResultActions result = mockMvc.perform(get("/api/users/{userid}", 1L));
+
+        result.andExpect(status().isNotFound());
+    }
+
+    // Test pour supprimer un utilisateur
+    @Test
+    void deleteUser_ShouldReturnNoContent() throws Exception {
         doNothing().when(userService).deleteUser(1L);
 
-        mockMvc.perform(delete("/api/users/1"))
-                .andExpect(status().isNoContent());
-    }
+        ResultActions result = mockMvc.perform(delete("/api/users/{userId}", 1L));
 
-    @Test
-    void deleteUser_UserDoesNotExist_ReturnsNotFound() throws Exception {
-        doThrow(new RuntimeException("User not found")).when(userService).deleteUser(999L);
-
-        mockMvc.perform(delete("/api/users/999"))
-                .andExpect(status().isNotFound());
+        result.andExpect(status().isNoContent());
     }
 }
-

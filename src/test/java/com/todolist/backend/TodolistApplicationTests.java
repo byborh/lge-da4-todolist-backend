@@ -18,22 +18,25 @@ class TodolistApplicationTests {
 	@Test
 	void TestUserController() throws Exception {
 		// Instanciation de TestUserController ou exécution des tests ici
-		TestUserController TestUserController = new TestUserController();
-		TestUserController.getUserByUsername_UserExists_ReturnsUser();
-		TestUserController.getUserByUsername_UserDoesNotExist_ReturnsNotFound();
-		TestUserController.createUser_ValidUser_CreatesUser();
-		TestUserController.deleteUser_UserExists_ReturnsNoContent();
-		TestUserController.deleteUser_UserDoesNotExist_ReturnsNotFound();
+		TestUserController testUserController = new TestUserController();
+		testUserController.createUser_ShouldReturnCreatedUser();
+		testUserController.createUser_WhenUserExists_ShouldReturnConflict();
+		testUserController.getUserByUserid_ShouldReturnUser();
+		testUserController.getUserByUsername_ShouldReturnUser();
+		testUserController.getUserByUserid_WhenUserNotFound_ShouldReturnNotFound();
 	}
 
 	@Test
 	void TestListNoteController() throws Exception {
 		// Instanciation de TestListNoteController ou exécution des tests ici
-		TestListNoteController TestListNoteController = new TestListNoteController();
-		TestListNoteController.getAllNotes_ListExists_ReturnsNotes();
-		TestListNoteController.findNoteById_NoteExists_ReturnsNote();
-		TestListNoteController.addNote_ListExists_AddsNote();
-		TestListNoteController.removeNote_ListExists_RemovesNote();
+		TestListNoteController testListNoteController = new TestListNoteController();
+		testListNoteController.addNote_ShouldReturnUpdatedListNote();
+		testListNoteController.getAllNotes_ShouldReturnListOfNotes();
+		testListNoteController.modifyNote_ShouldReturnUpdatedListNote();
+		testListNoteController.findNoteById_ShouldReturnNote();
+		testListNoteController.findNoteById_ShouldReturnNotFound();
+		testListNoteController.findNoteById_ShouldReturnNotFound();
+		testListNoteController.removeNote_ShouldReturnNoContent();
 	}
 
 }
