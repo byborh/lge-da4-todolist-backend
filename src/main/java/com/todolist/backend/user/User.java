@@ -18,7 +18,7 @@ public class User {
     @JsonManagedReference
     private List<ListNote> listNotes = new ArrayList<>();
 
-    public User() {}
+    public User(long id, String username, String password) {}
 
     public List<ListNote> getListNotes() {
         return listNotes;
